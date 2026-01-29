@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Package, BarChart3, ShoppingCart, FileText, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { UserMenu } from "./user-menu"
 
 const navigation = [
   { name: "ダッシュボード", href: "/dashboard", icon: BarChart3 },
@@ -49,7 +50,7 @@ export function Navbar() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            {/* ユーザーメニューは後で追加 */}
+            <UserMenu />
           </div>
         </div>
       </div>
