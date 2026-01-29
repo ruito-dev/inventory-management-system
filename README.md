@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 在庫管理システム (Inventory Management System)
 
-## Getting Started
+企業向けポートフォリオプロジェクトとして作成した、モダンな在庫管理システムです。
 
-First, run the development server:
+## 技術スタック
+
+### フロントエンド
+- **Next.js 16** - Reactフレームワーク
+- **React 19** - UIライブラリ
+- **TypeScript** - 型安全な開発
+- **Tailwind CSS** - ユーティリティファーストCSSフレームワーク
+
+### バックエンド・データベース
+- **Prisma** - 次世代ORMツール
+- **NextAuth.js (beta)** - 認証ライブラリ
+
+### UI・フォーム
+- **React Hook Form** - フォーム管理
+- **Zod** - スキーマバリデーション
+- **Lucide React** - アイコンライブラリ
+- **Recharts** - データ可視化
+
+### ユーティリティ
+- **bcryptjs** - パスワードハッシュ化
+- **date-fns** - 日付操作
+
+## 機能
+
+- ユーザー認証・認可
+- 在庫の登録・編集・削除
+- 在庫の検索・フィルタリング
+- 在庫レベルの可視化
+- レスポンシブデザイン
+
+## セットアップ
+
+### 前提条件
+
+- Node.js 20以上
+- npm または yarn
+
+### インストール
 
 ```bash
+# リポジトリのクローン
+git clone https://github.com/ruito-dev/inventory-management-system.git
+cd inventory-management-system
+
+# 依存パッケージのインストール
+npm install
+
+# 環境変数の設定
+cp .env.example .env.local
+# .env.localを編集して必要な環境変数を設定
+
+# Prismaのセットアップ
+npx prisma generate
+npx prisma db push
+
+# 開発サーバーの起動
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ブラウザで [http://localhost:3000](http://localhost:3000) を開いてアプリケーションを確認できます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 開発
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# 開発サーバーの起動
+npm run dev
 
-## Learn More
+# ビルド
+npm run build
 
-To learn more about Next.js, take a look at the following resources:
+# 本番環境での起動
+npm start
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# リント
+npm run lint
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## プロジェクト構成
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+inventory-management-system/
+├── app/                    # Next.js App Router
+│   ├── layout.tsx         # ルートレイアウト
+│   └── page.tsx           # ホームページ
+├── public/                # 静的ファイル
+├── prisma/                # Prismaスキーマ
+├── package.json           # 依存関係
+└── README.md             # このファイル
+```
