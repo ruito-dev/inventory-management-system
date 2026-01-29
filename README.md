@@ -79,6 +79,11 @@ npm start
 npm run lint
 ```
 
+## ドキュメント
+
+- [データベース設計書](docs/database-design.md) - テーブル定義、リレーション、ビジネスルール
+- [ER図](docs/er-diagram.md) - エンティティ関係図とデータフロー
+
 ## プロジェクト構成
 
 ```
