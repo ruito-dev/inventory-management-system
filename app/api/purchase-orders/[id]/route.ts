@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 // GET /api/purchase-orders/[id] - 発注詳細取得
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth()
 
@@ -11,8 +11,9 @@ export async function GET(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
+    const { id } = await params
     const order = await prisma.purchaseOrder.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         supplier: true,
         items: {
@@ -39,7 +40,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 }
 
 // PUT /api/purchase-orders/[id] - 発注ステータス更新
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth()
 
@@ -47,6 +48,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
     const { status } = body
 
@@ -56,7 +58,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
     // 発注の存在確認
     const existingOrder = await prisma.purchaseOrder.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingOrder) {
@@ -64,7 +66,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
 
     const order = await prisma.purchaseOrder.update({
-      where: { id: params.id },
+      where: { id },
       data: { status },
       include: {
         supplier: true,

@@ -14,7 +14,7 @@ const productSchema = z.object({
 })
 
 // GET /api/products/[id] - 商品詳細取得
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth()
 
@@ -22,8 +22,9 @@ export async function GET(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
+    const { id } = await params
     const product = await prisma.product.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         category: true,
       },
@@ -41,7 +42,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 }
 
 // PUT /api/products/[id] - 商品更新
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth()
 
@@ -49,12 +50,13 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
     const data = productSchema.parse(body)
 
     // 商品の存在確認
     const existingProduct = await prisma.product.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingProduct) {
@@ -73,7 +75,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
 
     const product = await prisma.product.update({
-      where: { id: params.id },
+      where: { id },
       data,
       include: {
         category: true,
@@ -91,7 +93,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 // DELETE /api/products/[id] - 商品削除
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth()
 
@@ -99,9 +101,10 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
+    const { id } = await params
     // 商品の存在確認
     const existingProduct = await prisma.product.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingProduct) {
@@ -109,7 +112,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     }
 
     await prisma.product.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ message: '商品を削除しました' })

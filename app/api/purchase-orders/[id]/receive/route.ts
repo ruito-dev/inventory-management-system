@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 // PUT /api/purchase-orders/[id]/receive - 入荷処理
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth()
 
@@ -11,9 +11,10 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
+    const { id } = await params
     // 発注の存在確認
     const existingOrder = await prisma.purchaseOrder.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         items: true,
       },
@@ -37,7 +38,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const result = await prisma.$transaction(async (tx) => {
       // 発注ステータスを入荷済みに更新
       const order = await tx.purchaseOrder.update({
-        where: { id: params.id },
+        where: { id },
         data: { status: 'RECEIVED' },
         include: {
           supplier: true,
@@ -73,7 +74,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
               productId: item.productId,
               type: 'IN',
               quantity: item.quantity,
-              reason: `発注入荷 (発注ID: ${params.id})`,
+              reason: `発注入荷 (発注ID: ${id})`,
               userId: session.user.id,
             },
           })
