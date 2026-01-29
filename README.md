@@ -34,12 +34,43 @@
 
 ## セットアップ
 
-### 前提条件
+### 方法1: Docker を使用（推奨）
 
+Dockerを使用すると、環境構築が簡単で一貫性のある開発環境を構築できます。
+
+#### 前提条件
+- Docker 20.10以上
+- Docker Compose 2.0以上
+
+#### 開発環境の起動
+
+```bash
+# リポジトリのクローン
+git clone https://github.com/ruito-dev/inventory-management-system.git
+cd inventory-management-system
+
+# 環境変数の設定
+cp .env.example .env
+
+# Docker Composeで起動（初回はビルドに時間がかかります）
+docker-compose -f docker-compose.dev.yml up --build
+
+# バックグラウンドで起動する場合
+docker-compose -f docker-compose.dev.yml up -d --build
+```
+
+アプリケーションは http://localhost:3000 で起動します。
+
+詳細は [Dockerドキュメント](docs/docker.md) を参照してください。
+
+### 方法2: ローカル環境
+
+#### 前提条件
 - Node.js 20以上
 - npm または yarn
+- PostgreSQL 16以上
 
-### インストール
+#### インストール
 
 ```bash
 # リポジトリのクローン
@@ -83,6 +114,7 @@ npm run lint
 
 - [データベース設計書](docs/database-design.md) - テーブル定義、リレーション、ビジネスルール
 - [ER図](docs/er-diagram.md) - エンティティ関係図とデータフロー
+- [Docker環境セットアップガイド](docs/docker.md) - Docker/Docker Composeの使用方法
 
 ## プロジェクト構成
 
