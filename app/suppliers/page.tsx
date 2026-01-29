@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { MainLayout, PageHeader } from '@/components/layout'
 import { Button } from '@/components/ui/button'
 import {
@@ -47,7 +46,6 @@ interface Supplier {
 }
 
 export default function SuppliersPage() {
-  const router = useRouter()
   const [suppliers, setSuppliers] = useState<Supplier[]>([])
   const [loading, setLoading] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -111,10 +109,7 @@ export default function SuppliersPage() {
 
   return (
     <MainLayout>
-      <PageHeader
-        title="仕入先管理"
-        description="仕入先の登録・管理を行います"
-      />
+      <PageHeader title="仕入先管理" description="仕入先の登録・管理を行います" />
 
       <div className="space-y-4">
         <div className="flex justify-end">
@@ -134,14 +129,8 @@ export default function SuppliersPage() {
                   <Label htmlFor="name">
                     仕入先名 <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    id="name"
-                    {...register('name')}
-                    placeholder="例: 株式会社サンプル商事"
-                  />
-                  {errors.name && (
-                    <p className="text-sm text-red-500">{errors.name.message}</p>
-                  )}
+                  <Input id="name" {...register('name')} placeholder="例: 株式会社サンプル商事" />
+                  {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
                 </div>
 
                 <div className="space-y-2">
@@ -152,30 +141,18 @@ export default function SuppliersPage() {
                     {...register('email')}
                     placeholder="例: info@example.com"
                   />
-                  {errors.email && (
-                    <p className="text-sm text-red-500">{errors.email.message}</p>
-                  )}
+                  {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="phone">電話番号</Label>
-                  <Input
-                    id="phone"
-                    {...register('phone')}
-                    placeholder="例: 03-1234-5678"
-                  />
-                  {errors.phone && (
-                    <p className="text-sm text-red-500">{errors.phone.message}</p>
-                  )}
+                  <Input id="phone" {...register('phone')} placeholder="例: 03-1234-5678" />
+                  {errors.phone && <p className="text-sm text-red-500">{errors.phone.message}</p>}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="address">住所</Label>
-                  <Input
-                    id="address"
-                    {...register('address')}
-                    placeholder="例: 東京都渋谷区..."
-                  />
+                  <Input id="address" {...register('address')} placeholder="例: 東京都渋谷区..." />
                   {errors.address && (
                     <p className="text-sm text-red-500">{errors.address.message}</p>
                   )}

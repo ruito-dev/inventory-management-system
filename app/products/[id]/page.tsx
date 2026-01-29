@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -58,19 +58,14 @@ export default function EditProductPage() {
 
   const categoryId = watch('categoryId')
 
-  useEffect(() => {
-    fetchProduct()
-    fetchCategories()
-  }, [])
-
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
       const response = await fetch(`/api/products/${productId}`)
       if (!response.ok) {
         throw new Error('商品の取得に失敗しました')
       }
       const product = await response.json()
-      
+
       setValue('name', product.name)
       setValue('sku', product.sku)
       setValue('description', product.description || '')
@@ -84,9 +79,9 @@ export default function EditProductPage() {
     } finally {
       setFetching(false)
     }
-  }
+  }, [productId, setValue, router])
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const response = await fetch('/api/categories')
       if (!response.ok) {
@@ -97,7 +92,12 @@ export default function EditProductPage() {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'カテゴリーの取得に失敗しました')
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchProduct()
+    fetchCategories()
+  }, [fetchProduct, fetchCategories])
 
   const onSubmit = async (data: ProductFormData) => {
     try {
@@ -136,17 +136,10 @@ export default function EditProductPage() {
 
   return (
     <MainLayout>
-      <PageHeader
-        title="商品編集"
-        description="商品情報を編集します"
-      />
+      <PageHeader title="商品編集" description="商品情報を編集します" />
 
       <div className="max-w-2xl">
-        <Button
-          variant="ghost"
-          onClick={() => router.push('/products')}
-          className="mb-4"
-        >
+        <Button variant="ghost" onClick={() => router.push('/products')} className="mb-4">
           <ArrowLeft className="h-4 w-4 mr-2" />
           商品一覧に戻る
         </Button>
@@ -161,28 +154,16 @@ export default function EditProductPage() {
                 <Label htmlFor="name">
                   商品名 <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="name"
-                  {...register('name')}
-                  placeholder="例: ノートパソコン"
-                />
-                {errors.name && (
-                  <p className="text-sm text-red-500">{errors.name.message}</p>
-                )}
+                <Input id="name" {...register('name')} placeholder="例: ノートパソコン" />
+                {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="sku">
                   SKU <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="sku"
-                  {...register('sku')}
-                  placeholder="例: LAPTOP-001"
-                />
-                {errors.sku && (
-                  <p className="text-sm text-red-500">{errors.sku.message}</p>
-                )}
+                <Input id="sku" {...register('sku')} placeholder="例: LAPTOP-001" />
+                {errors.sku && <p className="text-sm text-red-500">{errors.sku.message}</p>}
               </div>
 
               <div className="space-y-2">
@@ -202,10 +183,7 @@ export default function EditProductPage() {
                 <Label htmlFor="categoryId">
                   カテゴリー <span className="text-red-500">*</span>
                 </Label>
-                <Select
-                  value={categoryId}
-                  onValueChange={(value) => setValue('categoryId', value)}
-                >
+                <Select value={categoryId} onValueChange={(value) => setValue('categoryId', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="カテゴリーを選択" />
                   </SelectTrigger>
@@ -233,9 +211,7 @@ export default function EditProductPage() {
                   {...register('price', { valueAsNumber: true })}
                   placeholder="例: 100000"
                 />
-                {errors.price && (
-                  <p className="text-sm text-red-500">{errors.price.message}</p>
-                )}
+                {errors.price && <p className="text-sm text-red-500">{errors.price.message}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">

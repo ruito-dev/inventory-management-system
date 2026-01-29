@@ -1,45 +1,52 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Package } from "lucide-react"
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Package } from 'lucide-react'
 
 export default function SignupPage() {
   const router = useRouter()
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [error, setError] = useState("")
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError("")
+    setError('')
 
     if (password !== confirmPassword) {
-      setError("パスワードが一致しません")
+      setError('パスワードが一致しません')
       return
     }
 
     if (password.length < 8) {
-      setError("パスワードは8文字以上である必要があります")
+      setError('パスワードは8文字以上である必要があります')
       return
     }
 
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           name,
@@ -51,14 +58,14 @@ export default function SignupPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.error || "登録に失敗しました")
+        setError(data.error || '登録に失敗しました')
         return
       }
 
       // 登録成功後、ログインページにリダイレクト
-      router.push("/login?registered=true")
-    } catch (error) {
-      setError("登録に失敗しました")
+      router.push('/login?registered=true')
+    } catch {
+      setError('登録に失敗しました')
     } finally {
       setIsLoading(false)
     }
@@ -134,10 +141,10 @@ export default function SignupPage() {
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "登録中..." : "登録"}
+              {isLoading ? '登録中...' : '登録'}
             </Button>
             <p className="text-sm text-center text-muted-foreground">
-              既にアカウントをお持ちの方は{" "}
+              既にアカウントをお持ちの方は{' '}
               <Link href="/login" className="text-primary hover:underline">
                 ログイン
               </Link>

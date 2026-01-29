@@ -52,7 +52,6 @@ export default function NewStockTransactionPage() {
     handleSubmit,
     setValue,
     watch,
-    reset,
     formState: { errors },
   } = useForm<StockTransactionFormData>({
     resolver: zodResolver(stockTransactionSchema),
@@ -112,17 +111,10 @@ export default function NewStockTransactionPage() {
 
   return (
     <MainLayout>
-      <PageHeader
-        title="在庫取引登録"
-        description="入庫・出庫を登録します"
-      />
+      <PageHeader title="在庫取引登録" description="入庫・出庫を登録します" />
 
       <div className="max-w-2xl">
-        <Button
-          variant="ghost"
-          onClick={() => router.push('/stock-transactions')}
-          className="mb-4"
-        >
+        <Button variant="ghost" onClick={() => router.push('/stock-transactions')} className="mb-4">
           <ArrowLeft className="h-4 w-4 mr-2" />
           在庫取引履歴に戻る
         </Button>
@@ -132,7 +124,10 @@ export default function NewStockTransactionPage() {
             <CardTitle>取引情報</CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs value={transactionType} onValueChange={(v) => setTransactionType(v as 'IN' | 'OUT')}>
+            <Tabs
+              value={transactionType}
+              onValueChange={(v) => setTransactionType(v as 'IN' | 'OUT')}
+            >
               <TabsList className="grid w-full grid-cols-2 mb-6">
                 <TabsTrigger value="IN">入庫</TabsTrigger>
                 <TabsTrigger value="OUT">出庫</TabsTrigger>
@@ -198,9 +193,7 @@ export default function NewStockTransactionPage() {
                     <Label htmlFor="reason">
                       理由 <span className="text-red-500">*</span>
                     </Label>
-                    <Select
-                      onValueChange={(value) => setValue('reason', value)}
-                    >
+                    <Select onValueChange={(value) => setValue('reason', value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="理由を選択" />
                       </SelectTrigger>
@@ -267,7 +260,11 @@ export default function NewStockTransactionPage() {
                         </div>
                         <div>
                           <span className="text-muted-foreground">現在庫:</span>{' '}
-                          <span className={selectedProduct.currentStock === 0 ? 'text-red-500 font-medium' : ''}>
+                          <span
+                            className={
+                              selectedProduct.currentStock === 0 ? 'text-red-500 font-medium' : ''
+                            }
+                          >
                             {selectedProduct.currentStock}
                           </span>
                         </div>
@@ -299,9 +296,7 @@ export default function NewStockTransactionPage() {
                     <Label htmlFor="reason">
                       理由 <span className="text-red-500">*</span>
                     </Label>
-                    <Select
-                      onValueChange={(value) => setValue('reason', value)}
-                    >
+                    <Select onValueChange={(value) => setValue('reason', value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="理由を選択" />
                       </SelectTrigger>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { MainLayout, PageHeader } from '@/components/layout'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -66,11 +66,7 @@ export default function ReportsPage() {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
 
-  useEffect(() => {
-    fetchStatistics()
-  }, [])
-
-  const fetchStatistics = async () => {
+  const fetchStatistics = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams()
@@ -88,7 +84,11 @@ export default function ReportsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [startDate, endDate])
+
+  useEffect(() => {
+    fetchStatistics()
+  }, [fetchStatistics])
 
   const handleExportCSV = async (type: 'products' | 'transactions' | 'orders') => {
     try {
@@ -128,23 +128,49 @@ export default function ReportsPage() {
     }
   }
 
-  const convertToCSV = (data: any, type: string): string => {
+  const convertToCSV = (
+    data: {
+      products?: Array<{
+        name: string
+        sku: string
+        category: { name: string }
+        price: number
+        currentStock: number
+        minStockLevel: number
+      }>
+      transactions?: Array<{
+        createdAt: string
+        type: string
+        product: { name: string; sku: string }
+        quantity: number
+        reason: string
+      }>
+      orders?: Array<{
+        orderDate: string
+        supplier: { name: string }
+        status: string
+        expectedDate: string | null
+        totalAmount: number
+      }>
+    },
+    type: string
+  ): string => {
     const BOM = '\uFEFF'
     let csv = BOM
 
     if (type === 'products') {
       csv += '商品名,SKU,カテゴリー,価格,現在庫,最小在庫レベル\n'
-      data.products?.forEach((item: any) => {
+      data.products?.forEach((item) => {
         csv += `"${item.name}","${item.sku}","${item.category.name}",${item.price},${item.currentStock},${item.minStockLevel}\n`
       })
     } else if (type === 'transactions') {
       csv += '日時,取引タイプ,商品名,SKU,数量,理由\n'
-      data.transactions?.forEach((item: any) => {
+      data.transactions?.forEach((item) => {
         csv += `"${item.createdAt}","${item.type}","${item.product.name}","${item.product.sku}",${item.quantity},"${item.reason}"\n`
       })
     } else if (type === 'orders') {
       csv += '発注日,仕入先,ステータス,納期,合計金額\n'
-      data.orders?.forEach((item: any) => {
+      data.orders?.forEach((item) => {
         csv += `"${item.orderDate}","${item.supplier.name}","${item.status}","${item.expectedDate || ''}",${item.totalAmount}\n`
       })
     }
@@ -172,10 +198,7 @@ export default function ReportsPage() {
 
   return (
     <MainLayout>
-      <PageHeader
-        title="レポート"
-        description="統計情報とデータのエクスポート"
-      />
+      <PageHeader title="レポート" description="統計情報とデータのエクスポート" />
 
       <div className="space-y-6">
         {/* 期間選択 */}
