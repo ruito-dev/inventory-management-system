@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ユーザーモデル
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  stockTransactions StockTransaction[]
+
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+// カテゴリモデル
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products Product[]
+
+  @@map("categories")
+}
+
+// 商品モデル
+model Product {
+  id            String   @id @default(cuid())
+  name          String
+  sku           String   @unique
+  description   String?
+  categoryId    String
+  price         Decimal  @db.Decimal(10, 2)
+  currentStock  Int      @default(0)
+  minStockLevel Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  category          Category           @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  stockTransactions StockTransaction[]
+  purchaseOrderItems PurchaseOrderItem[]
+
+  @@map("products")
+}
+
+// 在庫取引モデル
+model StockTransaction {
+  id        String              @id @default(cuid())
+  productId String
+  type      StockTransactionType
+  quantity  Int
+  reason    String?
+  userId    String
+  createdAt DateTime            @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@map("stock_transactions")
+}
+
+enum StockTransactionType {
+  IN  // 入庫
+  OUT // 出庫
+}
+
+// 仕入先モデル
+model Supplier {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchaseOrders PurchaseOrder[]
+
+  @@map("suppliers")
+}
+
+// 発注モデル
+model PurchaseOrder {
+  id           String              @id @default(cuid())
+  supplierId   String
+  status       PurchaseOrderStatus @default(PENDING)
+  orderDate    DateTime            @default(now())
+  expectedDate DateTime?
+  totalAmount  Decimal             @db.Decimal(10, 2)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  supplier Supplier            @relation(fields: [supplierId], references: [id])
+  items    PurchaseOrderItem[]
+
+  @@map("purchase_orders")
+}
+
+enum PurchaseOrderStatus {
+  PENDING   // 発注中
+  RECEIVED  // 入荷済み
+  CANCELLED // キャンセル
+}
+
+// 発注明細モデル
+model PurchaseOrderItem {
+  id              String   @id @default(cuid())
+  purchaseOrderId String
+  productId       String
+  quantity        Int
+  unitPrice       Decimal  @db.Decimal(10, 2)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  product       Product       @relation(fields: [productId], references: [id])
+
+  @@map("purchase_order_items")
+}
