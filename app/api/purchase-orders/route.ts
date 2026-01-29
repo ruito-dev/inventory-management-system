@@ -21,10 +21,7 @@ export async function GET(request: Request) {
     const session = await auth()
 
     if (!session) {
-      return NextResponse.json(
-        { error: '認証が必要です' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
     const { searchParams } = new URL(request.url)
@@ -74,10 +71,7 @@ export async function GET(request: Request) {
     })
   } catch (error) {
     console.error('発注一覧取得エラー:', error)
-    return NextResponse.json(
-      { error: '発注一覧の取得に失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '発注一覧の取得に失敗しました' }, { status: 500 })
   }
 }
 
@@ -87,10 +81,7 @@ export async function POST(request: Request) {
     const session = await auth()
 
     if (!session) {
-      return NextResponse.json(
-        { error: '認証が必要です' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
     const body = await request.json()
@@ -102,10 +93,7 @@ export async function POST(request: Request) {
     })
 
     if (!supplier) {
-      return NextResponse.json(
-        { error: '仕入先が見つかりません' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: '仕入先が見つかりません' }, { status: 404 })
     }
 
     // 商品の存在確認
@@ -115,17 +103,11 @@ export async function POST(request: Request) {
     })
 
     if (products.length !== productIds.length) {
-      return NextResponse.json(
-        { error: '存在しない商品が含まれています' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: '存在しない商品が含まれています' }, { status: 404 })
     }
 
     // 合計金額を計算
-    const totalAmount = data.items.reduce(
-      (sum, item) => sum + item.quantity * item.unitPrice,
-      0
-    )
+    const totalAmount = data.items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0)
 
     // トランザクションで発注と発注明細を作成
     const order = await prisma.$transaction(async (tx) => {
@@ -164,14 +146,8 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('発注登録エラー:', error)
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.issues[0].message },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: error.issues[0].message }, { status: 400 })
     }
-    return NextResponse.json(
-      { error: '発注の登録に失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '発注の登録に失敗しました' }, { status: 500 })
   }
 }

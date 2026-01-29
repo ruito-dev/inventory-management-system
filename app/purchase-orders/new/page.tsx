@@ -145,11 +145,7 @@ export default function NewPurchaseOrderPage() {
       <PageHeader title="発注登録" description="新しい発注を登録します" />
 
       <div className="max-w-4xl">
-        <Button
-          variant="ghost"
-          onClick={() => router.push('/purchase-orders')}
-          className="mb-4"
-        >
+        <Button variant="ghost" onClick={() => router.push('/purchase-orders')} className="mb-4">
           <ArrowLeft className="h-4 w-4 mr-2" />
           発注一覧に戻る
         </Button>
@@ -189,11 +185,7 @@ export default function NewPurchaseOrderPage() {
                   <Label htmlFor="expectedDate">
                     納期 <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    id="expectedDate"
-                    type="date"
-                    {...register('expectedDate')}
-                  />
+                  <Input id="expectedDate" type="date" {...register('expectedDate')} />
                   {errors.expectedDate && (
                     <p className="text-sm text-red-500">{errors.expectedDate.message}</p>
                   )}
@@ -210,7 +202,9 @@ export default function NewPurchaseOrderPage() {
               {fields.map((field, index) => (
                 <div key={field.id} className="flex gap-4 items-start">
                   <div className="flex-1 space-y-2">
-                    <Label>商品 <span className="text-red-500">*</span></Label>
+                    <Label>
+                      商品 <span className="text-red-500">*</span>
+                    </Label>
                     <Select
                       value={items[index]?.productId || ''}
                       onValueChange={(value) => handleProductChange(index, value)}
@@ -234,7 +228,9 @@ export default function NewPurchaseOrderPage() {
                   </div>
 
                   <div className="w-24 space-y-2">
-                    <Label>数量 <span className="text-red-500">*</span></Label>
+                    <Label>
+                      数量 <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                       type="number"
                       {...register(`items.${index}.quantity`, { valueAsNumber: true })}
@@ -248,7 +244,9 @@ export default function NewPurchaseOrderPage() {
                   </div>
 
                   <div className="w-32 space-y-2">
-                    <Label>単価 <span className="text-red-500">*</span></Label>
+                    <Label>
+                      単価 <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                       type="number"
                       step="0.01"
@@ -265,7 +263,10 @@ export default function NewPurchaseOrderPage() {
                   <div className="w-32 space-y-2">
                     <Label>小計</Label>
                     <div className="h-10 flex items-center text-sm font-medium">
-                      ¥{((items[index]?.quantity || 0) * (items[index]?.unitPrice || 0)).toLocaleString()}
+                      ¥
+                      {(
+                        (items[index]?.quantity || 0) * (items[index]?.unitPrice || 0)
+                      ).toLocaleString()}
                     </div>
                   </div>
 
@@ -299,9 +300,7 @@ export default function NewPurchaseOrderPage() {
               <div className="flex justify-end pt-4 border-t">
                 <div className="text-right">
                   <div className="text-sm text-muted-foreground">合計金額</div>
-                  <div className="text-2xl font-bold">
-                    ¥{calculateTotal().toLocaleString()}
-                  </div>
+                  <div className="text-2xl font-bold">¥{calculateTotal().toLocaleString()}</div>
                 </div>
               </div>
             </CardContent>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { MainLayout, PageHeader } from '@/components/layout'
 import { Button } from '@/components/ui/button'
@@ -60,11 +60,7 @@ export default function PurchaseOrdersPage() {
   const [total, setTotal] = useState(0)
   const limit = 20
 
-  useEffect(() => {
-    fetchOrders()
-  }, [currentPage, selectedStatus])
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
@@ -90,7 +86,11 @@ export default function PurchaseOrdersPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [currentPage, selectedStatus])
+
+  useEffect(() => {
+    fetchOrders()
+  }, [fetchOrders])
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value)
@@ -100,20 +100,29 @@ export default function PurchaseOrdersPage() {
   const getStatusBadge = (status: 'PENDING' | 'RECEIVED' | 'CANCELLED') => {
     switch (status) {
       case 'PENDING':
-        return <Badge variant="outline" className="border-blue-500 text-blue-600">発注中</Badge>
+        return (
+          <Badge variant="outline" className="border-blue-500 text-blue-600">
+            発注中
+          </Badge>
+        )
       case 'RECEIVED':
-        return <Badge variant="outline" className="border-green-500 text-green-600">入荷済み</Badge>
+        return (
+          <Badge variant="outline" className="border-green-500 text-green-600">
+            入荷済み
+          </Badge>
+        )
       case 'CANCELLED':
-        return <Badge variant="outline" className="border-gray-500 text-gray-600">キャンセル</Badge>
+        return (
+          <Badge variant="outline" className="border-gray-500 text-gray-600">
+            キャンセル
+          </Badge>
+        )
     }
   }
 
   return (
     <MainLayout>
-      <PageHeader
-        title="発注管理"
-        description="発注の登録・管理を行います"
-      />
+      <PageHeader title="発注管理" description="発注の登録・管理を行います" />
 
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row gap-4">
@@ -197,8 +206,8 @@ export default function PurchaseOrdersPage() {
         {totalPages > 1 && (
           <div className="flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
-              全{total}件中 {(currentPage - 1) * limit + 1}〜
-              {Math.min(currentPage * limit, total)}件を表示
+              全{total}件中 {(currentPage - 1) * limit + 1}〜{Math.min(currentPage * limit, total)}
+              件を表示
             </div>
             <div className="flex gap-2">
               <Button

@@ -8,10 +8,7 @@ export async function GET(request: Request) {
     const session = await auth()
 
     if (!session) {
-      return NextResponse.json(
-        { error: '認証が必要です' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
     const { searchParams } = new URL(request.url)
@@ -40,9 +37,7 @@ export async function GET(request: Request) {
       name: category.name,
       totalStock: category.products.reduce((sum, p) => sum + p.currentStock, 0),
       productCount: category.products.length,
-      lowStockCount: category.products.filter(
-        (p) => p.currentStock <= p.minStockLevel
-      ).length,
+      lowStockCount: category.products.filter((p) => p.currentStock <= p.minStockLevel).length,
     }))
 
     // 在庫取引統計（期間別）
@@ -56,9 +51,7 @@ export async function GET(request: Request) {
     })
 
     const transactionStats = {
-      totalIn: transactions
-        .filter((t) => t.type === 'IN')
-        .reduce((sum, t) => sum + t.quantity, 0),
+      totalIn: transactions.filter((t) => t.type === 'IN').reduce((sum, t) => sum + t.quantity, 0),
       totalOut: transactions
         .filter((t) => t.type === 'OUT')
         .reduce((sum, t) => sum + t.quantity, 0),
@@ -69,15 +62,6 @@ export async function GET(request: Request) {
     }
 
     // 発注統計（仕入先別）
-    const purchaseOrders = await prisma.purchaseOrder.findMany({
-      where: {
-        orderDate: Object.keys(dateFilter).length > 0 ? dateFilter : undefined,
-      },
-      include: {
-        supplier: true,
-      },
-    })
-
     const supplierStats = await prisma.supplier.findMany({
       include: {
         purchaseOrders: {
@@ -139,9 +123,6 @@ export async function GET(request: Request) {
     })
   } catch (error) {
     console.error('統計取得エラー:', error)
-    return NextResponse.json(
-      { error: '統計の取得に失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '統計の取得に失敗しました' }, { status: 500 })
   }
 }

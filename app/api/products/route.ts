@@ -1,16 +1,16 @@
-import { NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { auth } from "@/lib/auth"
-import { z } from "zod"
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { auth } from '@/lib/auth'
+import { z } from 'zod'
 
 const productSchema = z.object({
-  name: z.string().min(1, "商品名を入力してください"),
-  sku: z.string().min(1, "SKUを入力してください"),
+  name: z.string().min(1, '商品名を入力してください'),
+  sku: z.string().min(1, 'SKUを入力してください'),
   description: z.string().optional(),
-  categoryId: z.string().min(1, "カテゴリを選択してください"),
-  price: z.number().min(0, "価格は0以上である必要があります"),
-  currentStock: z.number().int().min(0, "在庫数は0以上である必要があります"),
-  minStockLevel: z.number().int().min(0, "最小在庫レベルは0以上である必要があります"),
+  categoryId: z.string().min(1, 'カテゴリを選択してください'),
+  price: z.number().min(0, '価格は0以上である必要があります'),
+  currentStock: z.number().int().min(0, '在庫数は0以上である必要があります'),
+  minStockLevel: z.number().int().min(0, '最小在庫レベルは0以上である必要があります'),
 })
 
 // GET /api/products - 商品一覧取得
@@ -18,14 +18,14 @@ export async function GET(request: Request) {
   try {
     const session = await auth()
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { searchParams } = new URL(request.url)
-    const search = searchParams.get("search") || ""
-    const categoryId = searchParams.get("categoryId") || ""
-    const page = parseInt(searchParams.get("page") || "1")
-    const limit = parseInt(searchParams.get("limit") || "10")
+    const search = searchParams.get('search') || ''
+    const categoryId = searchParams.get('categoryId') || ''
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '10')
     const skip = (page - 1) * limit
 
     const where = {
@@ -33,8 +33,8 @@ export async function GET(request: Request) {
         search
           ? {
               OR: [
-                { name: { contains: search, mode: "insensitive" as const } },
-                { sku: { contains: search, mode: "insensitive" as const } },
+                { name: { contains: search, mode: 'insensitive' as const } },
+                { sku: { contains: search, mode: 'insensitive' as const } },
               ],
             }
           : {},
@@ -49,7 +49,7 @@ export async function GET(request: Request) {
           category: true,
         },
         orderBy: {
-          createdAt: "desc",
+          createdAt: 'desc',
         },
         skip,
         take: limit,
@@ -65,11 +65,8 @@ export async function GET(request: Request) {
       totalPages: Math.ceil(total / limit),
     })
   } catch (error) {
-    console.error("Products GET error:", error)
-    return NextResponse.json(
-      { error: "商品一覧の取得に失敗しました" },
-      { status: 500 }
-    )
+    console.error('Products GET error:', error)
+    return NextResponse.json({ error: '商品一覧の取得に失敗しました' }, { status: 500 })
   }
 }
 
@@ -78,7 +75,7 @@ export async function POST(request: Request) {
   try {
     const session = await auth()
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const body = await request.json()
@@ -90,10 +87,7 @@ export async function POST(request: Request) {
     })
 
     if (existingProduct) {
-      return NextResponse.json(
-        { error: "このSKUは既に登録されています" },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'このSKUは既に登録されています' }, { status: 400 })
     }
 
     const product = await prisma.product.create({
@@ -106,16 +100,10 @@ export async function POST(request: Request) {
     return NextResponse.json(product, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.issues[0].message },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: error.issues[0].message }, { status: 400 })
     }
 
-    console.error("Product POST error:", error)
-    return NextResponse.json(
-      { error: "商品の登録に失敗しました" },
-      { status: 500 }
-    )
+    console.error('Product POST error:', error)
+    return NextResponse.json({ error: '商品の登録に失敗しました' }, { status: 500 })
   }
 }

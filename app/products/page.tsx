@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { MainLayout, PageHeader } from '@/components/layout'
 import { Button } from '@/components/ui/button'
@@ -62,12 +62,7 @@ export default function ProductsPage() {
   const [total, setTotal] = useState(0)
   const limit = 10
 
-  useEffect(() => {
-    fetchProducts()
-    fetchCategories()
-  }, [currentPage, searchQuery, selectedCategory])
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
@@ -97,9 +92,9 @@ export default function ProductsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [currentPage, searchQuery, selectedCategory])
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const response = await fetch('/api/categories')
       if (!response.ok) {
@@ -110,7 +105,12 @@ export default function ProductsPage() {
     } catch (error) {
       console.error('カテゴリーの取得エラー:', error)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchProducts()
+    fetchCategories()
+  }, [fetchProducts, fetchCategories])
 
   const handleSearch = (value: string) => {
     setSearchQuery(value)
@@ -148,17 +148,22 @@ export default function ProductsPage() {
       return <Badge variant="destructive">在庫なし</Badge>
     }
     if (currentStock <= minStockLevel) {
-      return <Badge variant="outline" className="border-yellow-500 text-yellow-600">在庫少</Badge>
+      return (
+        <Badge variant="outline" className="border-yellow-500 text-yellow-600">
+          在庫少
+        </Badge>
+      )
     }
-    return <Badge variant="outline" className="border-green-500 text-green-600">在庫あり</Badge>
+    return (
+      <Badge variant="outline" className="border-green-500 text-green-600">
+        在庫あり
+      </Badge>
+    )
   }
 
   return (
     <MainLayout>
-      <PageHeader
-        title="商品管理"
-        description="商品の登録・編集・削除を行います"
-      />
+      <PageHeader title="商品管理" description="商品の登録・編集・削除を行います" />
 
       <div className="space-y-4">
         {/* 検索・フィルター */}
@@ -221,17 +226,11 @@ export default function ProductsPage() {
               ) : (
                 products.map((product) => (
                   <TableRow key={product.id}>
-                    <TableCell className="font-mono text-sm">
-                      {product.sku}
-                    </TableCell>
+                    <TableCell className="font-mono text-sm">{product.sku}</TableCell>
                     <TableCell className="font-medium">{product.name}</TableCell>
                     <TableCell>{product.category.name}</TableCell>
-                    <TableCell className="text-right">
-                      ¥{product.price.toLocaleString()}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {product.currentStock}
-                    </TableCell>
+                    <TableCell className="text-right">¥{product.price.toLocaleString()}</TableCell>
+                    <TableCell className="text-right">{product.currentStock}</TableCell>
                     <TableCell>
                       {getStockBadge(product.currentStock, product.minStockLevel)}
                     </TableCell>
@@ -244,11 +243,7 @@ export default function ProductsPage() {
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDelete(product.id)}
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => handleDelete(product.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -264,8 +259,8 @@ export default function ProductsPage() {
         {totalPages > 1 && (
           <div className="flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
-              全{total}件中 {(currentPage - 1) * limit + 1}〜
-              {Math.min(currentPage * limit, total)}件を表示
+              全{total}件中 {(currentPage - 1) * limit + 1}〜{Math.min(currentPage * limit, total)}
+              件を表示
             </div>
             <div className="flex gap-2">
               <Button

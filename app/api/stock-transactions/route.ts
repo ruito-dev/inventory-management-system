@@ -16,10 +16,7 @@ export async function GET(request: Request) {
     const session = await auth()
 
     if (!session) {
-      return NextResponse.json(
-        { error: '認証が必要です' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
     const { searchParams } = new URL(request.url)
@@ -86,10 +83,7 @@ export async function GET(request: Request) {
     })
   } catch (error) {
     console.error('在庫取引一覧取得エラー:', error)
-    return NextResponse.json(
-      { error: '在庫取引一覧の取得に失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '在庫取引一覧の取得に失敗しました' }, { status: 500 })
   }
 }
 
@@ -99,10 +93,7 @@ export async function POST(request: Request) {
     const session = await auth()
 
     if (!session) {
-      return NextResponse.json(
-        { error: '認証が必要です' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
     const body = await request.json()
@@ -114,18 +105,12 @@ export async function POST(request: Request) {
     })
 
     if (!product) {
-      return NextResponse.json(
-        { error: '商品が見つかりません' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: '商品が見つかりません' }, { status: 404 })
     }
 
     // 出庫の場合、在庫数をチェック
     if (data.type === 'OUT' && product.currentStock < data.quantity) {
-      return NextResponse.json(
-        { error: '在庫数が不足しています' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: '在庫数が不足しています' }, { status: 400 })
     }
 
     // トランザクションで在庫取引と在庫数を更新
@@ -166,14 +151,8 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('在庫取引登録エラー:', error)
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.issues[0].message },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: error.issues[0].message }, { status: 400 })
     }
-    return NextResponse.json(
-      { error: '在庫取引の登録に失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '在庫取引の登録に失敗しました' }, { status: 500 })
   }
 }

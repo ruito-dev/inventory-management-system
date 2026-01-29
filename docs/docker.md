@@ -118,9 +118,9 @@ curl http://localhost:3000
 
 ```yaml
 volumes:
-  - .:/app              # ソースコードをマウント
-  - /app/node_modules   # node_modulesは除外
-  - /app/.next          # .nextディレクトリは除外
+  - .:/app # ソースコードをマウント
+  - /app/node_modules # node_modulesは除外
+  - /app/.next # .nextディレクトリは除外
 ```
 
 ### デバッグ
@@ -263,7 +263,7 @@ Mac/Windowsでは、ボリュームマウントのパフォーマンスが遅い
 
 ```yaml
 volumes:
-  - .:/app:cached  # 読み取りキャッシュを有効化
+  - .:/app:cached # 読み取りキャッシュを有効化
 ```
 
 ## CI/CDでの使用
@@ -282,10 +282,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Build Docker image
         run: docker build -t inventory-app .
-      
+
       - name: Run tests
         run: docker-compose run app npm test
 ```

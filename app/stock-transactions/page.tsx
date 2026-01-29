@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { MainLayout, PageHeader } from '@/components/layout'
 import { Button } from '@/components/ui/button'
@@ -64,11 +64,7 @@ export default function StockTransactionsPage() {
   const [total, setTotal] = useState(0)
   const limit = 20
 
-  useEffect(() => {
-    fetchTransactions()
-  }, [currentPage, selectedType, startDate, endDate])
-
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
@@ -102,7 +98,11 @@ export default function StockTransactionsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [currentPage, selectedType, startDate, endDate])
+
+  useEffect(() => {
+    fetchTransactions()
+  }, [fetchTransactions])
 
   const handleTypeChange = (value: string) => {
     setSelectedType(value)
@@ -133,10 +133,7 @@ export default function StockTransactionsPage() {
 
   return (
     <MainLayout>
-      <PageHeader
-        title="在庫取引履歴"
-        description="入庫・出庫の履歴を確認します"
-      />
+      <PageHeader title="在庫取引履歴" description="入庫・出庫の履歴を確認します" />
 
       <div className="space-y-4">
         {/* フィルター */}
@@ -212,12 +209,8 @@ export default function StockTransactionsPage() {
                       })}
                     </TableCell>
                     <TableCell>{getTypeBadge(transaction.type)}</TableCell>
-                    <TableCell className="font-medium">
-                      {transaction.product.name}
-                    </TableCell>
-                    <TableCell className="font-mono text-sm">
-                      {transaction.product.sku}
-                    </TableCell>
+                    <TableCell className="font-medium">{transaction.product.name}</TableCell>
+                    <TableCell className="font-mono text-sm">{transaction.product.sku}</TableCell>
                     <TableCell>{transaction.product.category.name}</TableCell>
                     <TableCell className="text-right font-medium">
                       {transaction.type === 'IN' ? '+' : '-'}
@@ -235,8 +228,8 @@ export default function StockTransactionsPage() {
         {totalPages > 1 && (
           <div className="flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
-              全{total}件中 {(currentPage - 1) * limit + 1}〜
-              {Math.min(currentPage * limit, total)}件を表示
+              全{total}件中 {(currentPage - 1) * limit + 1}〜{Math.min(currentPage * limit, total)}
+              件を表示
             </div>
             <div className="flex gap-2">
               <Button

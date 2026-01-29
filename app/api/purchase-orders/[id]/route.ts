@@ -3,22 +3,17 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 // GET /api/purchase-orders/[id] - 発注詳細取得
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth()
 
     if (!session) {
-      return NextResponse.json(
-        { error: '認証が必要です' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
+    const { id } = await params
     const order = await prisma.purchaseOrder.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         supplier: true,
         items: {
@@ -34,61 +29,44 @@ export async function GET(
     })
 
     if (!order) {
-      return NextResponse.json(
-        { error: '発注が見つかりません' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: '発注が見つかりません' }, { status: 404 })
     }
 
     return NextResponse.json(order)
   } catch (error) {
     console.error('発注詳細取得エラー:', error)
-    return NextResponse.json(
-      { error: '発注詳細の取得に失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '発注詳細の取得に失敗しました' }, { status: 500 })
   }
 }
 
 // PUT /api/purchase-orders/[id] - 発注ステータス更新
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth()
 
     if (!session) {
-      return NextResponse.json(
-        { error: '認証が必要です' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
     const { status } = body
 
     if (!status || !['PENDING', 'RECEIVED', 'CANCELLED'].includes(status)) {
-      return NextResponse.json(
-        { error: '無効なステータスです' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: '無効なステータスです' }, { status: 400 })
     }
 
     // 発注の存在確認
     const existingOrder = await prisma.purchaseOrder.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingOrder) {
-      return NextResponse.json(
-        { error: '発注が見つかりません' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: '発注が見つかりません' }, { status: 404 })
     }
 
     const order = await prisma.purchaseOrder.update({
-      where: { id: params.id },
+      where: { id },
       data: { status },
       include: {
         supplier: true,
@@ -107,9 +85,6 @@ export async function PUT(
     return NextResponse.json(order)
   } catch (error) {
     console.error('発注ステータス更新エラー:', error)
-    return NextResponse.json(
-      { error: '発注ステータスの更新に失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '発注ステータスの更新に失敗しました' }, { status: 500 })
   }
 }

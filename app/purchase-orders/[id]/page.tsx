@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { MainLayout, PageHeader } from '@/components/layout'
 import { Button } from '@/components/ui/button'
@@ -61,11 +61,7 @@ export default function PurchaseOrderDetailPage() {
   const [loading, setLoading] = useState(true)
   const [processing, setProcessing] = useState(false)
 
-  useEffect(() => {
-    fetchOrder()
-  }, [])
-
-  const fetchOrder = async () => {
+  const fetchOrder = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/purchase-orders/${orderId}`)
@@ -80,7 +76,11 @@ export default function PurchaseOrderDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [orderId, router])
+
+  useEffect(() => {
+    fetchOrder()
+  }, [fetchOrder])
 
   const handleReceive = async () => {
     if (!confirm('この発注を入荷済みにしますか？在庫が自動的に更新されます。')) {
@@ -139,11 +139,23 @@ export default function PurchaseOrderDetailPage() {
   const getStatusBadge = (status: 'PENDING' | 'RECEIVED' | 'CANCELLED') => {
     switch (status) {
       case 'PENDING':
-        return <Badge variant="outline" className="border-blue-500 text-blue-600">発注中</Badge>
+        return (
+          <Badge variant="outline" className="border-blue-500 text-blue-600">
+            発注中
+          </Badge>
+        )
       case 'RECEIVED':
-        return <Badge variant="outline" className="border-green-500 text-green-600">入荷済み</Badge>
+        return (
+          <Badge variant="outline" className="border-green-500 text-green-600">
+            入荷済み
+          </Badge>
+        )
       case 'CANCELLED':
-        return <Badge variant="outline" className="border-gray-500 text-gray-600">キャンセル</Badge>
+        return (
+          <Badge variant="outline" className="border-gray-500 text-gray-600">
+            キャンセル
+          </Badge>
+        )
     }
   }
 
@@ -166,10 +178,7 @@ export default function PurchaseOrderDetailPage() {
       <PageHeader title="発注詳細" description="発注の詳細情報を確認します" />
 
       <div className="max-w-4xl space-y-6">
-        <Button
-          variant="ghost"
-          onClick={() => router.push('/purchase-orders')}
-        >
+        <Button variant="ghost" onClick={() => router.push('/purchase-orders')}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           発注一覧に戻る
         </Button>
@@ -263,11 +272,7 @@ export default function PurchaseOrderDetailPage() {
               <Package className="h-4 w-4 mr-2" />
               {processing ? '処理中...' : '入荷処理'}
             </Button>
-            <Button
-              variant="outline"
-              onClick={handleCancel}
-              disabled={processing}
-            >
+            <Button variant="outline" onClick={handleCancel} disabled={processing}>
               キャンセル
             </Button>
           </div>

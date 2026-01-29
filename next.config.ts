@@ -1,9 +1,9 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   // Docker用のスタンドアロン出力設定
   output: 'standalone',
-  
+
   // 開発環境でのホットリロード設定
   ...(process.env.NODE_ENV === 'development' && {
     webpack: (config) => {
@@ -14,6 +14,6 @@ const nextConfig: NextConfig = {
       return config
     },
   }),
-};
+}
 
-export default nextConfig;
+export default nextConfig

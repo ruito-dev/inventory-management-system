@@ -8,10 +8,7 @@ export async function GET() {
     const session = await auth()
 
     if (!session) {
-      return NextResponse.json(
-        { error: '認証が必要です' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
     // 在庫数が最小在庫レベル以下の商品を取得
@@ -42,9 +39,6 @@ export async function GET() {
     })
   } catch (error) {
     console.error('在庫アラート取得エラー:', error)
-    return NextResponse.json(
-      { error: '在庫アラートの取得に失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '在庫アラートの取得に失敗しました' }, { status: 500 })
   }
 }
