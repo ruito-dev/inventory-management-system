@@ -13,7 +13,8 @@
 
 ### バックエンド・データベース
 
-- **Prisma** - 次世代ORMツール
+- **Prisma 5.22.0** - 次世代ORMツール（Alpine Linux環境での安定性のため）
+- **PostgreSQL 16** - リレーショナルデータベース
 - **NextAuth.js (beta)** - 認証ライブラリ
 
 ### UI・フォーム
@@ -135,6 +136,14 @@ npm run test:watch    # ウォッチモード
 npm run test:coverage # カバレッジ付き
 ```
 
+### テストの種類
+
+- **コンポーネントテスト**: React Testing Libraryを使用したUIコンポーネントのテスト
+- **ユーティリティテスト**: 共通関数のユニットテスト
+- **API Routeテスト**: Next.js API Routeのエンドポイントテスト（NextRequestを使用）
+
+テストファイルは対象ファイルと同じディレクトリの`__tests__`フォルダに配置されています。
+
 ### コミット前の自動チェック
 
 このプロジェクトでは、huskyとlint-stagedを使用して、コミット前に自動的にLintとフォーマットを実行します。
@@ -142,6 +151,33 @@ npm run test:coverage # カバレッジ付き
 - コミット時に自動的にステージングされたファイルに対してESLintとPrettierが実行されます
 - エラーがある場合はコミットが中断されます
 - 自動修正可能なエラーは自動的に修正されます
+
+## トラブルシューティング
+
+### Docker環境でPrismaエラーが発生する場合
+
+Alpine Linuxベースのコンテナで`PrismaClientInitializationError`が発生する場合、OpenSSLライブラリの依存関係が原因の可能性があります。
+
+**解決方法**:
+
+1. `Dockerfile.dev`に以下のパッケージが含まれていることを確認:
+
+   ```dockerfile
+   RUN apk add --no-cache libc6-compat openssl openssl-dev
+   ```
+
+2. Prismaのバージョンを確認（v5.22.0を推奨）:
+
+   ```json
+   "@prisma/client": "^5.22.0",
+   "prisma": "^5.22.0"
+   ```
+
+3. コンテナを再ビルド:
+   ```bash
+   docker-compose -f docker-compose.dev.yml down
+   docker-compose -f docker-compose.dev.yml up --build
+   ```
 
 ## ドキュメント
 
