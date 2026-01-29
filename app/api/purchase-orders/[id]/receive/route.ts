@@ -3,18 +3,12 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 // PUT /api/purchase-orders/[id]/receive - 入荷処理
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const session = await auth()
 
     if (!session) {
-      return NextResponse.json(
-        { error: '認証が必要です' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
     // 発注の存在確認
@@ -26,26 +20,17 @@ export async function PUT(
     })
 
     if (!existingOrder) {
-      return NextResponse.json(
-        { error: '発注が見つかりません' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: '発注が見つかりません' }, { status: 404 })
     }
 
     // 既に入荷済みの場合はエラー
     if (existingOrder.status === 'RECEIVED') {
-      return NextResponse.json(
-        { error: 'この発注は既に入荷済みです' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'この発注は既に入荷済みです' }, { status: 400 })
     }
 
     // キャンセル済みの場合はエラー
     if (existingOrder.status === 'CANCELLED') {
-      return NextResponse.json(
-        { error: 'キャンセル済みの発注は入荷できません' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'キャンセル済みの発注は入荷できません' }, { status: 400 })
     }
 
     // トランザクションで発注ステータスと在庫を更新
@@ -101,9 +86,6 @@ export async function PUT(
     return NextResponse.json(result)
   } catch (error) {
     console.error('入荷処理エラー:', error)
-    return NextResponse.json(
-      { error: '入荷処理に失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '入荷処理に失敗しました' }, { status: 500 })
   }
 }

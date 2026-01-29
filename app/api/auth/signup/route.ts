@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server"
-import { hash } from "bcryptjs"
-import { prisma } from "@/lib/prisma"
-import { z } from "zod"
+import { NextResponse } from 'next/server'
+import { hash } from 'bcryptjs'
+import { prisma } from '@/lib/prisma'
+import { z } from 'zod'
 
 const signupSchema = z.object({
-  email: z.string().email("有効なメールアドレスを入力してください"),
-  password: z.string().min(8, "パスワードは8文字以上である必要があります"),
-  name: z.string().min(1, "名前を入力してください"),
+  email: z.string().email('有効なメールアドレスを入力してください'),
+  password: z.string().min(8, 'パスワードは8文字以上である必要があります'),
+  name: z.string().min(1, '名前を入力してください'),
 })
 
 export async function POST(request: Request) {
@@ -16,12 +16,12 @@ export async function POST(request: Request) {
 
     // メールアドレスの重複チェック
     const existingUser = await prisma.user.findUnique({
-      where: { email }
+      where: { email },
     })
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "このメールアドレスは既に登録されています" },
+        { error: 'このメールアドレスは既に登録されています' },
         { status: 400 }
       )
     }
@@ -35,8 +35,8 @@ export async function POST(request: Request) {
         email,
         password: hashedPassword,
         name,
-        role: "USER"
-      }
+        role: 'USER',
+      },
     })
 
     return NextResponse.json(
@@ -45,23 +45,17 @@ export async function POST(request: Request) {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role
-        }
+          role: user.role,
+        },
       },
       { status: 201 }
     )
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.issues[0].message },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: error.issues[0].message }, { status: 400 })
     }
 
-    console.error("Signup error:", error)
-    return NextResponse.json(
-      { error: "ユーザー登録に失敗しました" },
-      { status: 500 }
-    )
+    console.error('Signup error:', error)
+    return NextResponse.json({ error: 'ユーザー登録に失敗しました' }, { status: 500 })
   }
 }

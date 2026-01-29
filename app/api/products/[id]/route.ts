@@ -14,18 +14,12 @@ const productSchema = z.object({
 })
 
 // GET /api/products/[id] - 商品詳細取得
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const session = await auth()
 
     if (!session) {
-      return NextResponse.json(
-        { error: '認証が必要です' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
     const product = await prisma.product.findUnique({
@@ -36,35 +30,23 @@ export async function GET(
     })
 
     if (!product) {
-      return NextResponse.json(
-        { error: '商品が見つかりません' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: '商品が見つかりません' }, { status: 404 })
     }
 
     return NextResponse.json(product)
   } catch (error) {
     console.error('商品詳細取得エラー:', error)
-    return NextResponse.json(
-      { error: '商品詳細の取得に失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '商品詳細の取得に失敗しました' }, { status: 500 })
   }
 }
 
 // PUT /api/products/[id] - 商品更新
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const session = await auth()
 
     if (!session) {
-      return NextResponse.json(
-        { error: '認証が必要です' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
     const body = await request.json()
@@ -76,10 +58,7 @@ export async function PUT(
     })
 
     if (!existingProduct) {
-      return NextResponse.json(
-        { error: '商品が見つかりません' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: '商品が見つかりません' }, { status: 404 })
     }
 
     // SKUの重複チェック（自分以外）
@@ -89,10 +68,7 @@ export async function PUT(
       })
 
       if (duplicateSku) {
-        return NextResponse.json(
-          { error: 'このSKUは既に登録されています' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'このSKUは既に登録されています' }, { status: 400 })
       }
     }
 
@@ -108,31 +84,19 @@ export async function PUT(
   } catch (error) {
     console.error('商品更新エラー:', error)
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.issues[0].message },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: error.issues[0].message }, { status: 400 })
     }
-    return NextResponse.json(
-      { error: '商品の更新に失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '商品の更新に失敗しました' }, { status: 500 })
   }
 }
 
 // DELETE /api/products/[id] - 商品削除
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
     const session = await auth()
 
     if (!session) {
-      return NextResponse.json(
-        { error: '認証が必要です' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
     // 商品の存在確認
@@ -141,10 +105,7 @@ export async function DELETE(
     })
 
     if (!existingProduct) {
-      return NextResponse.json(
-        { error: '商品が見つかりません' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: '商品が見つかりません' }, { status: 404 })
     }
 
     await prisma.product.delete({
@@ -154,9 +115,6 @@ export async function DELETE(
     return NextResponse.json({ message: '商品を削除しました' })
   } catch (error) {
     console.error('商品削除エラー:', error)
-    return NextResponse.json(
-      { error: '商品の削除に失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '商品の削除に失敗しました' }, { status: 500 })
   }
 }

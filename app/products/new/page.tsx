@@ -98,17 +98,10 @@ export default function NewProductPage() {
 
   return (
     <MainLayout>
-      <PageHeader
-        title="商品登録"
-        description="新しい商品を登録します"
-      />
+      <PageHeader title="商品登録" description="新しい商品を登録します" />
 
       <div className="max-w-2xl">
-        <Button
-          variant="ghost"
-          onClick={() => router.push('/products')}
-          className="mb-4"
-        >
+        <Button variant="ghost" onClick={() => router.push('/products')} className="mb-4">
           <ArrowLeft className="h-4 w-4 mr-2" />
           商品一覧に戻る
         </Button>
@@ -123,28 +116,16 @@ export default function NewProductPage() {
                 <Label htmlFor="name">
                   商品名 <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="name"
-                  {...register('name')}
-                  placeholder="例: ノートパソコン"
-                />
-                {errors.name && (
-                  <p className="text-sm text-red-500">{errors.name.message}</p>
-                )}
+                <Input id="name" {...register('name')} placeholder="例: ノートパソコン" />
+                {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="sku">
                   SKU <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="sku"
-                  {...register('sku')}
-                  placeholder="例: LAPTOP-001"
-                />
-                {errors.sku && (
-                  <p className="text-sm text-red-500">{errors.sku.message}</p>
-                )}
+                <Input id="sku" {...register('sku')} placeholder="例: LAPTOP-001" />
+                {errors.sku && <p className="text-sm text-red-500">{errors.sku.message}</p>}
               </div>
 
               <div className="space-y-2">
@@ -164,10 +145,7 @@ export default function NewProductPage() {
                 <Label htmlFor="categoryId">
                   カテゴリー <span className="text-red-500">*</span>
                 </Label>
-                <Select
-                  value={categoryId}
-                  onValueChange={(value) => setValue('categoryId', value)}
-                >
+                <Select value={categoryId} onValueChange={(value) => setValue('categoryId', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="カテゴリーを選択" />
                   </SelectTrigger>
@@ -195,9 +173,7 @@ export default function NewProductPage() {
                   {...register('price', { valueAsNumber: true })}
                   placeholder="例: 100000"
                 />
-                {errors.price && (
-                  <p className="text-sm text-red-500">{errors.price.message}</p>
-                )}
+                {errors.price && <p className="text-sm text-red-500">{errors.price.message}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">

@@ -5,22 +5,26 @@
 ## 技術スタック
 
 ### フロントエンド
+
 - **Next.js 16** - Reactフレームワーク
 - **React 19** - UIライブラリ
 - **TypeScript** - 型安全な開発
 - **Tailwind CSS** - ユーティリティファーストCSSフレームワーク
 
 ### バックエンド・データベース
+
 - **Prisma** - 次世代ORMツール
 - **NextAuth.js (beta)** - 認証ライブラリ
 
 ### UI・フォーム
+
 - **React Hook Form** - フォーム管理
 - **Zod** - スキーマバリデーション
 - **Lucide React** - アイコンライブラリ
 - **Recharts** - データ可視化
 
 ### ユーティリティ
+
 - **bcryptjs** - パスワードハッシュ化
 - **date-fns** - 日付操作
 
@@ -39,6 +43,7 @@
 Dockerを使用すると、環境構築が簡単で一貫性のある開発環境を構築できます。
 
 #### 前提条件
+
 - Docker 20.10以上
 - Docker Compose 2.0以上
 
@@ -66,6 +71,7 @@ docker-compose -f docker-compose.dev.yml up -d --build
 ### 方法2: ローカル環境
 
 #### 前提条件
+
 - Node.js 20以上
 - npm または yarn
 - PostgreSQL 16以上

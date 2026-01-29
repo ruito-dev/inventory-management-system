@@ -1,18 +1,18 @@
-"use client"
+'use client'
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Package, BarChart3, ShoppingCart, FileText, Settings } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { UserMenu } from "./user-menu"
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { Package, BarChart3, ShoppingCart, FileText, Settings } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { UserMenu } from './user-menu'
 
 const navigation = [
-  { name: "ダッシュボード", href: "/dashboard", icon: BarChart3 },
-  { name: "商品管理", href: "/products", icon: Package },
-  { name: "在庫管理", href: "/stock", icon: ShoppingCart },
-  { name: "発注管理", href: "/purchase-orders", icon: FileText },
-  { name: "レポート", href: "/reports", icon: FileText },
-  { name: "設定", href: "/settings", icon: Settings },
+  { name: 'ダッシュボード', href: '/dashboard', icon: BarChart3 },
+  { name: '商品管理', href: '/products', icon: Package },
+  { name: '在庫管理', href: '/stock', icon: ShoppingCart },
+  { name: '発注管理', href: '/purchase-orders', icon: FileText },
+  { name: 'レポート', href: '/reports', icon: FileText },
+  { name: '設定', href: '/settings', icon: Settings },
 ]
 
 export function Navbar() {
@@ -36,10 +36,10 @@ export function Navbar() {
                     key={item.name}
                     href={item.href}
                     className={cn(
-                      "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                      'flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors',
                       isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                     )}
                   >
                     <Icon className="h-4 w-4" />

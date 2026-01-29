@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { signOut, useSession } from "next-auth/react"
-import { LogOut, User } from "lucide-react"
+import { signOut, useSession } from 'next-auth/react'
+import { LogOut, User } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,9 +9,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 
 export function UserMenu() {
   const { data: session } = useSession()
@@ -20,11 +20,12 @@ export function UserMenu() {
     return null
   }
 
-  const initials = session.user.name
-    ?.split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase() || "U"
+  const initials =
+    session.user.name
+      ?.split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase() || 'U'
 
   return (
     <DropdownMenu>
@@ -39,9 +40,7 @@ export function UserMenu() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{session.user.name}</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {session.user.email}
-            </p>
+            <p className="text-xs leading-none text-muted-foreground">{session.user.email}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -52,7 +51,7 @@ export function UserMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-red-600"
-          onClick={() => signOut({ callbackUrl: "/login" })}
+          onClick={() => signOut({ callbackUrl: '/login' })}
         >
           <LogOut className="mr-2 h-4 w-4" />
           <span>ログアウト</span>

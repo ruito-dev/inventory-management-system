@@ -7,10 +7,7 @@ export async function GET() {
     const session = await auth()
 
     if (!session) {
-      return NextResponse.json(
-        { error: '認証が必要です' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
     }
 
     const categories = await prisma.category.findMany({
@@ -22,9 +19,6 @@ export async function GET() {
     return NextResponse.json(categories)
   } catch (error) {
     console.error('カテゴリー取得エラー:', error)
-    return NextResponse.json(
-      { error: 'カテゴリーの取得に失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'カテゴリーの取得に失敗しました' }, { status: 500 })
   }
 }
