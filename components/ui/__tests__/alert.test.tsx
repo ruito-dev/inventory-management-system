@@ -14,14 +14,14 @@ describe('Alert Components', () => {
       const { container } = render(<Alert>デフォルト</Alert>)
 
       const alert = container.firstChild
-      expect(alert).toHaveClass('bg-background')
+      expect(alert).toHaveClass('bg-card')
     })
 
     it('destructivevariantで表示される', () => {
       const { container } = render(<Alert variant="destructive">エラー</Alert>)
 
       const alert = container.firstChild
-      expect(alert).toHaveClass('border-destructive/50')
+      expect(alert).toHaveClass('text-destructive')
     })
 
     it('カスタムclassNameを適用できる', () => {
@@ -43,7 +43,7 @@ describe('Alert Components', () => {
       expect(screen.getByText('アラートタイトル')).toBeInTheDocument()
     })
 
-    it('h5要素として描画される', () => {
+    it('div要素として描画される', () => {
       render(
         <Alert>
           <AlertTitle>タイトル</AlertTitle>
@@ -51,7 +51,7 @@ describe('Alert Components', () => {
       )
 
       const title = screen.getByText('タイトル')
-      expect(title.tagName).toBe('H5')
+      expect(title.tagName).toBe('DIV')
     })
 
     it('カスタムclassNameを適用できる', () => {
