@@ -28,6 +28,15 @@
 - **bcryptjs** - パスワードハッシュ化
 - **date-fns** - 日付操作
 
+### 開発ツール
+
+- **ESLint** - コード品質チェック
+- **Prettier** - コードフォーマッター
+- **Jest** - テストフレームワーク
+- **React Testing Library** - Reactコンポーネントテスト
+- **husky** - Gitフック管理
+- **lint-staged** - ステージングファイルのLint実行
+
 ## 機能
 
 - ユーザー認証・認可
@@ -114,7 +123,25 @@ npm start
 
 # リント
 npm run lint
+npm run lint:fix  # 自動修正
+
+# フォーマット
+npm run format         # 全ファイルをフォーマット
+npm run format:check   # フォーマットチェックのみ
+
+# テスト
+npm test              # テスト実行
+npm run test:watch    # ウォッチモード
+npm run test:coverage # カバレッジ付き
 ```
+
+### コミット前の自動チェック
+
+このプロジェクトでは、huskyとlint-stagedを使用して、コミット前に自動的にLintとフォーマットを実行します。
+
+- コミット時に自動的にステージングされたファイルに対してESLintとPrettierが実行されます
+- エラーがある場合はコミットが中断されます
+- 自動修正可能なエラーは自動的に修正されます
 
 ## ドキュメント
 
