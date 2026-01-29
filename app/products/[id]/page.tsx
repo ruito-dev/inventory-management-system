@@ -54,6 +54,15 @@ export default function EditProductPage() {
     formState: { errors },
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
+    defaultValues: {
+      name: '',
+      sku: '',
+      description: '',
+      categoryId: '',
+      price: 0,
+      currentStock: 0,
+      minStockLevel: 0,
+    },
   })
 
   const categoryId = watch('categoryId')
@@ -149,7 +158,7 @@ export default function EditProductPage() {
             <CardTitle>商品情報</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
               <div className="space-y-2">
                 <Label htmlFor="name">
                   商品名 <span className="text-red-500">*</span>
@@ -163,6 +172,9 @@ export default function EditProductPage() {
                   SKU <span className="text-red-500">*</span>
                 </Label>
                 <Input id="sku" {...register('sku')} placeholder="例: LAPTOP-001" />
+                <p className="text-sm text-muted-foreground">
+                  商品を識別するための一意のコード（例: LAPTOP-001、PHONE-XYZ-123）
+                </p>
                 {errors.sku && <p className="text-sm text-red-500">{errors.sku.message}</p>}
               </div>
 
@@ -183,7 +195,10 @@ export default function EditProductPage() {
                 <Label htmlFor="categoryId">
                   カテゴリー <span className="text-red-500">*</span>
                 </Label>
-                <Select value={categoryId} onValueChange={(value) => setValue('categoryId', value)}>
+                <Select
+                  value={categoryId}
+                  onValueChange={(value) => setValue('categoryId', value, { shouldValidate: true })}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="カテゴリーを選択" />
                   </SelectTrigger>
