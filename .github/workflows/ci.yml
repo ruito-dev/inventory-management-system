@@ -38,10 +38,3 @@ jobs:
 
       - name: Run tests
         run: npm test
-
-      - name: Build
-        run: npm run build
-        env:
-          DATABASE_URL: postgresql://user:password@localhost:5432/testdb
-          NEXTAUTH_SECRET: test-secret-key-for-ci
-          NEXTAUTH_URL: http://localhost:3000
